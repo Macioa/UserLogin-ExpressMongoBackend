@@ -16,5 +16,15 @@
   "bugs": {
     "url": "https://github.com/Macioa/UserLogin-ExpressMongoBackend/issues"
   },
-  "homepage": "https://github.com/Macioa/UserLogin-ExpressMongoBackend#readme"
+  "homepage": "https://github.com/Macioa/UserLogin-ExpressMongoBackend#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.1",
+    "express": "^4.16.3",
+    "foreman": "^3.0.1",
+    "helmet": "^3.13.0",
+    "method-override": "^3.0.0",
+    "mongodb": "^3.1.1",
+    "mongoose": "^5.2.6"
+  }
 }
