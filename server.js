@@ -3,6 +3,9 @@ const chalk = require('chalk')
 const express = require('express')
 const server = express();
 
+try { require('./env') }catch(err){ console.log(err)}
+require('./dbConnect')
+
 const port = process.env.PORT||3000;
 
 
