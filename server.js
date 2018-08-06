@@ -27,7 +27,10 @@ const corsOptions = {
 server.use(cors(corsOptions));
 
 
-server.use(require('./Controller/auth'))
+server.use('/auth/', require('./Controller/auth'))
+
+server.post('/login', (req,res,next)=>{ res.redirect(307,'/auth/login') })
+server.post('/register', (req,res,next)=>{ res.redirect(307,'/auth/register') })
 
 server.listen(port, (err)=>{
     if (err) console.error(chalk.red('Could not start Express server: '+chalk.grey(err)))

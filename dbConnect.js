@@ -8,6 +8,7 @@ mongoose.connect(dbURL)
 mongoose.connection.on('connected', () =>{
     console.log();
     console.log(chalk.green('Mongoose connected')+chalk.grey(` to ${dbURL}`));
+    console.log();
 });
 
 mongoose.connection.on('error', (err) =>{
