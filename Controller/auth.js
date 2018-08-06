@@ -3,6 +3,11 @@ const router = Express.Router();
 
 const bcrypt = require ('bcrypt')
 const chalk = require('chalk')
+// const cookie = require('cookie-session')
+// router.use(cookie({
+//     httpOnly: false,
+//     keys: ['secret']
+// }));
 
 const Users = require('../Models/User')
 
@@ -14,17 +19,20 @@ router.post('/register', async (req, res, next)=>{
     newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,'');
 
     try{
-        let createdUser = Users.create(newUser);
-
+        let createdUser = await Users.create(newUser);
+        console.log(chalk.green(`Created user: `+chalk.grey(createdUser.username)))
         req.session.logged = true;
         req.session.username = req.body.username;
-
+        //res.set({"Set-Cookie": `username=${createdUser.username}`, "Path":"/"})
+        res.cookie('user', createdUser.username, { maxAge: 60*1000, httpOnly: false, sameSite:true })
+        if (createdUser.zip) res.cookie('zip', createdUser.zip, {  maxAge: 60*1000, httpOnly: false, sameSite:true })
+        if (createdUser.city) res.cookie('city', createdUser.city, {  maxAge: 60*1000, httpOnly: false, sameSite:true })
         res.json({
             status: 201,
-            data: 'Registration successful',
+            data: 'Registration successful'
         });
     } catch (err) { 
-        console.err(err);
+        console.error(err);
         res.json({
             status: 418,
             data: err,
@@ -47,9 +55,10 @@ router.post('/login', async (req, res, next) =>{
                 req.session.username = req.body.username;
                 
                 console.log(`Successfully logged in ${foundUser.username}`)
+                res.set({"Set-Cookie": `username=${foundUser.username}`, "Path":"/"})
                 res.json({
-                status: 200,
-                data: 'Login successful',
+                    status: 200,
+                    data: 'Login successful',
                 });
             } else {
                 console.log(chalk.red('Invalid password'))
