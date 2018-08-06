@@ -1,16 +1,35 @@
-const chalk = require('chalk')
-
-const express = require('express')
-const server = express();
-
-try { require('./env') }catch(err){ console.log(err)}
+try { require('./env') }catch(err){ console.log(err)};
 require('./dbConnect')
-
 const port = process.env.PORT||3000;
 
+const express = require('express');
+const server = express();
+const session = require('express-session')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const chalk = require('chalk');
 
+
+server.use(session({
+    secret: 'nooneknowsthissupersecretkeythatsongithub',
+    resave: false,
+    saveUninitialized: false
+  }))
+  
+server.use(bodyParser.urlencoded({extended: false}));
+server.use(bodyParser.json());
+  
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    optionsSuccessStatus: 200 
+  }
+server.use(cors(corsOptions));
+
+
+server.use(require('./Controller/auth'))
 
 server.listen(port, (err)=>{
     if (err) console.error(chalk.red('Could not start Express server: '+chalk.grey(err)))
     else console.log(chalk.green('Express server listening on : ')+chalk.yellow(`${port}`))
-})
+});
