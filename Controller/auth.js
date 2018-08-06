@@ -11,7 +11,7 @@ router.post('/register', async (req, res, next)=>{
     console.log(chalk.grey(`(${ip})`)+` Create request received for user: ${req.body.username}`);
 
     let newUser = req.body, hashPass = await bcrypt.hash(req.body.password, 10);
-    newUser.password = hashPass;
+    newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,'');
 
     try{
         let createdUser = Users.create(newUser);
