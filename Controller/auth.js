@@ -17,7 +17,7 @@ router.post('/register', async (req, res, next)=>{
 
         req.session.logged = true;
         req.session.username = req.body.username;
-        
+
         res.json({
             status: 201,
             data: 'Registration successful',
@@ -48,8 +48,13 @@ router.post('/login', async (req, res, next) =>{
     
         res.json({
           status: 200,
-          data: 'login successful',
+          data: 'Login successful',
         });
+    } else {
+        res.json({
+            status: 409,
+            data: 'Invalid password',
+          });
     }
 
 })
