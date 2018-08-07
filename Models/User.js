@@ -8,7 +8,8 @@ const UserSchema = new mongoose.Schema({
     minlength: [5, 'Zip must be 5 digits'],
     maxlength: [5, 'Zip must be 5 digits'],
   },
-  city: { type: String, default: null}
+  city: { type: String, default: null},
+  guest: Boolean
 });
 
 
