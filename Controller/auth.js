@@ -9,7 +9,7 @@ const getZipByIp = require('../IPStack/Geolocate')
 const Users = require('../Models/User')
 
 const cookieLength = process.env.COOKIELENGTH||24*60*60*1000
-const cookieOptions = process.env.cookieOptions||{ maxAge: cookieLength, httpOnly: false, sameSite:true }
+const cookieOptions = process.env.COOKIEOPTIONS||{ maxAge: cookieLength, httpOnly: false, sameSite:true }
 
 router.post('/register', async (req, res, next)=>{
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
