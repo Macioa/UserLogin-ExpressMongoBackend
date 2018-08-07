@@ -31,6 +31,7 @@ const createUser = async (newUser, req, res) =>{
         res.cookie('user', createdUser.username, cookieOptions)
         if (createdUser.zip) res.cookie('zip', createdUser.zip, cookieOptions)
         if (createdUser.city) res.cookie('city', createdUser.city, cookieOptions)
+        delete createdUser.password;
         res.json({
             status: 201,
             data: 'Registration successful',
@@ -81,6 +82,7 @@ router.post('/login', async (req, res, next) =>{
                 res.cookie('user', foundUser.username, cookieOptions)
                 if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions)
                 if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions)
+                delete foundUser.password;
                 res.json({
                     status: 200,
                     data: 'Login successful',
@@ -104,32 +106,33 @@ router.post('/login', async (req, res, next) =>{
 
 router.post('/guest', async (req, res, next)=>{
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(chalk.grey(`(${ip}) `)+"Request for guest access")
+    console.log(chalk.grey(`(${ip}) `)+"Request for guest access");
 
-      var foundUser = await  Users.findOne({username:ip})
-        if (foundUser){
-            console.log(`Successfully logged in ${foundUser.username}`)
-            foundUser.username='Guest';
-            req.session.logged = true;
-            req.session.username = req.body.username;
-            
-            res.cookie('user', foundUser.username, cookieOptions)
-            if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions)
-            if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions)
-            res.json({
-                status: 200,
-                data: 'Login successful',
-                user: foundUser
-            });
-        } else {
-            let newUser = {};
-            newUser.password = "temporary";
-            newUser.username=ip;
-            newUser.guest=true;
-            let location = getZipByIp(ip)
-            Object.assign(newUser, await location)
-            createUser(newUser, req, res);
-        }
+    var foundUser = await  Users.findOne({username:ip})
+    if (foundUser){
+        console.log(`Successfully logged in ${foundUser.username}`);
+        foundUser.username='Guest';
+        req.session.logged = true;
+        req.session.username = req.body.username;
+        
+        res.cookie('user', foundUser.username, cookieOptions);
+        if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions);
+        if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions);
+        delete foundUser.password;
+        res.json({
+            status: 200,
+            data: 'Login successful',
+            user: foundUser
+        });
+    } else {
+        let newUser = {};
+        newUser.password = "temporary";
+        newUser.username=ip;
+        newUser.guest=true;
+        let location = getZipByIp(ip)
+        Object.assign(newUser, await location)
+        createUser(newUser, req, res);
+    }
 });
 
 module.exports = router;
