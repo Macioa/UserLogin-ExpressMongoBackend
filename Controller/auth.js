@@ -16,7 +16,7 @@ const deleteAllUsers = async () => { Users.find({}, (err, users)=>{
     console.log(users)
     for (let user of users)
         Users.findByIdAndRemove(user.id, (err, user)=>{console.log(chalk.red('Deleted:'),user)})}) }
-deleteAllUsers()
+//deleteAllUsers()
 
 const createUser = async (newUser, req, res) =>{
     try{
