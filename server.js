@@ -9,7 +9,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const chalk = require('chalk');
 
-
 server.use(session({
     secret: 'nooneknowsthissupersecretkeythatsongithub',
     resave: false,
@@ -19,13 +18,12 @@ server.use(session({
 server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
   
-const corsOptions = {
+var corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
     optionsSuccessStatus: 200 
   }
 server.use(cors(corsOptions));
-
 
 server.use('/auth/', require('./Controller/auth'))
 

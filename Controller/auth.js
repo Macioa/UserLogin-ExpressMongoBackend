@@ -3,13 +3,13 @@ const router = Express.Router();
 
 const bcrypt = require ('bcrypt')
 const chalk = require('chalk')
-// const cookie = require('cookie-session')
-// router.use(cookie({
-//     httpOnly: false,
-//     keys: ['secret']
-// }));
+
+const getZipByIp = require('../IPStack/Geolocate')
 
 const Users = require('../Models/User')
+
+const cookieLength = process.env.COOKIELENGTH||24*60*60*1000
+const cookieOptions = process.env.cookieOptions||{ maxAge: cookieLength, httpOnly: false, sameSite:true }
 
 router.post('/register', async (req, res, next)=>{
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -17,16 +17,19 @@ router.post('/register', async (req, res, next)=>{
 
     let newUser = req.body, hashPass = await bcrypt.hash(req.body.password, 10);
     newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,'');
+    let result = getZipByIp(ip)
+
+    Object.assign(newUser,await result);
 
     try{
         let createdUser = await Users.create(newUser);
         console.log(chalk.green(`Created user: `+chalk.grey(createdUser.username)))
         req.session.logged = true;
         req.session.username = req.body.username;
-        //res.set({"Set-Cookie": `username=${createdUser.username}`, "Path":"/"})
-        res.cookie('user', createdUser.username, { maxAge: 60*1000, httpOnly: false, sameSite:true })
-        if (createdUser.zip) res.cookie('zip', createdUser.zip, {  maxAge: 60*1000, httpOnly: false, sameSite:true })
-        if (createdUser.city) res.cookie('city', createdUser.city, {  maxAge: 60*1000, httpOnly: false, sameSite:true })
+
+        res.cookie('user', createdUser.username, cookieOptions)
+        if (createdUser.zip) res.cookie('zip', createdUser.zip, cookieOptions)
+        if (createdUser.city) res.cookie('city', createdUser.city, cookieOptions)
         res.json({
             status: 201,
             data: 'Registration successful'
@@ -55,7 +58,9 @@ router.post('/login', async (req, res, next) =>{
                 req.session.username = req.body.username;
                 
                 console.log(`Successfully logged in ${foundUser.username}`)
-                res.set({"Set-Cookie": `username=${foundUser.username}`, "Path":"/"})
+                res.cookie('user', createdUser.username, cookieOptions)
+                if (createdUser.zip) res.cookie('zip', createdUser.zip, cookieOptions)
+                if (createdUser.city) res.cookie('city', createdUser.city, cookieOptions)
                 res.json({
                     status: 200,
                     data: 'Login successful',
