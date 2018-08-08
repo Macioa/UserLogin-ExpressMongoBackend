@@ -5,7 +5,7 @@
 try { require('./env') }catch(err){ console.log(err)};
 require('./dbConnect')
 const port = process.env.PORT||3000;
-const server = process.env.SERVER||'https://localhost:3000'
+const frontserver = process.env.SERVER||'https://localhost:3000'
 
 const express = require('express');
 const server = express();
@@ -25,7 +25,7 @@ server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
   
 var corsOptions = {
-  origin: server,
+  origin: frontserver,
   content:'application/json',
   methods: 'POST',
   credentials: true,
