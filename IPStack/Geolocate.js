@@ -9,7 +9,7 @@ const geolocateIP = async (ip) => {
             })
         let parsedresponse = await response.json();
         if (await parsedresponse.city&&parsedresponse.zip)
-            return await {city: parsedresponse.city, zip: parseFloat(parsedresponse.zip)} 
+            return await {city: parsedresponse.city, state: parsedresponse.state, country: parsedresponse.country, zip: parseFloat(parsedresponse.zip)} 
         else return {}
         } catch (err) {console.error(err)}
     return {}

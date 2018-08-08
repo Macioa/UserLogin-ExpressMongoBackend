@@ -33,8 +33,10 @@ const createUser = async (newUser, req, res) =>{
         req.session.username = req.body.username;
 
         res.cookie('user', createdUser.username, cookieOptions)
-        if (createdUser.zip) res.cookie('zip', createdUser.zip, cookieOptions)
-        if (createdUser.city) res.cookie('city', createdUser.city, cookieOptions)
+        if (createdUser.zip) res.cookie('zip', createdUser.zip, cookieOptions);
+        if (createdUser.city) res.cookie('city', createdUser.city, cookieOptions);
+        if (createdUser.state) res.cookie('state', createdUser.state, cookieOptions);
+        if (createdUser.country) res.cookie('country', createdUser.country, cookieOptions);
         createdUser.password=null; createdUser._id=null;
         res.json({
             status: 201,
@@ -56,7 +58,8 @@ router.post('/register', async (req, res, next)=>{
     console.log(chalk.grey(`(${ip})`)+` Create request received for user: ${req.body.username}`);
 
     let newUser = req.body, hashPass = await bcrypt.hash(req.body.password, 10);
-    newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,'');
+    newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,''); newUser.ips=[ip]
+
 
     let result = await getZipByIp(ip)
     Object.assign(newUser, result)
@@ -84,10 +87,17 @@ router.post('/login', async (req, res, next) =>{
                 req.session.logged = true;
                 req.session.username = req.body.username;
                 
-                console.log(`Successfully logged in ${foundUser.username}`)
+                console.log(`Successfully logged in ${foundUser.username}`,foundUser)
+                if (foundUser.ips.find(ip)==-1){
+                    founderUser.ips.push(ip)
+                    Users.findByIdAndUpdate(foundUser._id, foundUser, {new: true})
+                }
+
                 res.cookie('user', foundUser.username, cookieOptions)
-                if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions)
-                if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions)
+                if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions);
+                if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions);
+                if (foundUser.state) res.cookie('state', foundUser.state, cookieOptions);
+                if (foundUser.country) res.cookie('country', foundUser.country, cookieOptions);
                 foundUser.password=null; foundUser._id=null;
                 res.json({
                     status: 200,
@@ -124,6 +134,8 @@ router.post('/guest', async (req, res, next)=>{
         res.cookie('user', foundUser.username, cookieOptions);
         if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions);
         if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions);
+        if (foundUser.state) res.cookie('state', foundUser.state, cookieOptions);
+        if (foundUser.country) res.cookie('country', foundUser.country, cookieOptions);
         foundUser.password=null; foundUser._id=null;
         res.json({
             status: 200,
