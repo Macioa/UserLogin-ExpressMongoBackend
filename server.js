@@ -1,16 +1,18 @@
 /*
         Server Variables:
-        DBURL, DBUSER, DBPASS, PORT, COOKIELENGTH, COOKIEOPTIONS, ENCRYPTIONMETHOD, ENCRYPTIONKEY
+        DBURL, DBUSER, DBPASS, PORT, COOKIELENGTH, COOKIEOPTIONS, ENCRYPTIONMETHOD, ENCRYPTIONKEY, SERVER
 */
 try { require('./env') }catch(err){ console.log(err)};
 require('./dbConnect')
 const port = process.env.PORT||3000;
+const server = process.env.SERVER||'https://localhost:3000'
 
 const express = require('express');
 const server = express();
-const session = require('express-session')
-const bodyParser = require('body-parser')
-const cors = require('cors')
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
 const chalk = require('chalk');
 
 server.use(session({
@@ -23,11 +25,14 @@ server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
   
 var corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true,
-    optionsSuccessStatus: 200 
-  }
+  origin: server,
+  content:'application/json',
+  methods: 'POST',
+  credentials: true,
+  optionsSuccessStatus: 200 
+}
 server.use(cors(corsOptions));
+server.use(helmet())
 
 server.use('/auth/', require('./Controller/auth'))
 
