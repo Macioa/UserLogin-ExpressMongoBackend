@@ -1,22 +1,26 @@
 const Express = require('express');
 const router = Express.Router();
 
-const bcrypt = require ('bcrypt')
-const chalk = require('chalk')
+const bcrypt = require ('bcrypt');
+const chalk = require('chalk');
 
 const getZipByIp = require('../IPStack/Geolocate')
 
 const Users = require('../Models/User')
 
+//                  Server Variables
 const cookieLength = process.env.COOKIELENGTH||24*60*60*1000
 const cookieOptions = process.env.COOKIEOPTIONS||{ maxAge: cookieLength, httpOnly: false, sameSite:'strict' }
+const encryptionMethod = process.env.ENCRYPTIONMETHOD||'aes-256-ctr'
+const encryptionKey = process.env.ENCRYPTIONKEY||'supersupersecret'
 
+//                  Reg functions
 const getUsers = async () => { return await Users.find({}) }
+
 const deleteAllUsers = async () => { Users.find({}, (err, users)=>{
     console.log(users)
     for (let user of users)
         Users.findByIdAndRemove(user.id, (err, user)=>{console.log(chalk.red('Deleted:'),user)})}) }
-//deleteAllUsers()
 
 const createUser = async (newUser, req, res) =>{
     try{
@@ -31,7 +35,7 @@ const createUser = async (newUser, req, res) =>{
         res.cookie('user', createdUser.username, cookieOptions)
         if (createdUser.zip) res.cookie('zip', createdUser.zip, cookieOptions)
         if (createdUser.city) res.cookie('city', createdUser.city, cookieOptions)
-        delete createdUser.password;
+        createdUser.password=null; createdUser._id=null;
         res.json({
             status: 201,
             data: 'Registration successful',
@@ -46,6 +50,7 @@ const createUser = async (newUser, req, res) =>{
     }
 }
 
+//                  Routes
 router.post('/register', async (req, res, next)=>{
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(chalk.grey(`(${ip})`)+` Create request received for user: ${req.body.username}`);
@@ -71,10 +76,11 @@ router.post('/login', async (req, res, next) =>{
     console.log(chalk.grey(`(${ip})`)+` Attempting to login user: ${req.body.username}`);
 
         let foundUser = await Users.findOne({username:req.body.username})
-        if (foundUser){
-            let match = await bcrypt.compareSync(req.body.password, foundUser.password); 
 
-            if (match){
+        if (await foundUser){
+            let match = await bcrypt.compareSync(req.body.password, await foundUser.password);
+
+            if (await match){
                 req.session.logged = true;
                 req.session.username = req.body.username;
                 
@@ -82,7 +88,7 @@ router.post('/login', async (req, res, next) =>{
                 res.cookie('user', foundUser.username, cookieOptions)
                 if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions)
                 if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions)
-                delete foundUser.password;
+                foundUser.password=null; foundUser._id=null;
                 res.json({
                     status: 200,
                     data: 'Login successful',
@@ -118,7 +124,7 @@ router.post('/guest', async (req, res, next)=>{
         res.cookie('user', foundUser.username, cookieOptions);
         if (foundUser.zip) res.cookie('zip', foundUser.zip, cookieOptions);
         if (foundUser.city) res.cookie('city', foundUser.city, cookieOptions);
-        delete foundUser.password;
+        foundUser.password=null; foundUser._id=null;
         res.json({
             status: 200,
             data: 'Login successful',

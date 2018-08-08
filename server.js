@@ -1,3 +1,7 @@
+/*
+        Server Variables:
+        DBURL, DBUSER, DBPASS, PORT, COOKIELENGTH, COOKIEOPTIONS, ENCRYPTIONMETHOD, ENCRYPTIONKEY
+*/
 try { require('./env') }catch(err){ console.log(err)};
 require('./dbConnect')
 const port = process.env.PORT||3000;
