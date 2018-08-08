@@ -58,7 +58,7 @@ router.post('/register', async (req, res, next)=>{
     console.log(chalk.grey(`(${ip})`)+` Create request received for user: ${req.body.username}`);
 
     let newUser = req.body, hashPass = await bcrypt.hash(req.body.password, 10);
-    newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,''); newUser.ips=[ip]
+    newUser.password = hashPass; newUser.username = newUser.username.replace(/[^a-z0-9]/gi,''); newUser.ips=[]; newUser.ips[0]=ip.toString();
 
 
     let result = await getZipByIp(ip)
@@ -88,7 +88,8 @@ router.post('/login', async (req, res, next) =>{
                 req.session.username = req.body.username;
                 
                 console.log(`Successfully logged in ${foundUser.username}`,foundUser)
-                if (foundUser.ips.find(ip)==-1){
+
+                if (!foundUser.ips.filter(i=>i==ip.toString()).length){
                     founderUser.ips.push(ip)
                     Users.findByIdAndUpdate(foundUser._id, foundUser, {new: true})
                 }
