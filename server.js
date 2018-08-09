@@ -26,7 +26,7 @@ server.use(bodyParser.json());
   
 var corsOptions = {
   origin: frontserver,
-  content:'application/json',
+  content:'json',
   methods: 'POST',
   credentials: true,
   optionsSuccessStatus: 200 
