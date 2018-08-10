@@ -54,6 +54,9 @@ const createUser = async (newUser, req, res) =>{
 
 //                  Routes
 router.post('/register', async (req, res, next)=>{
+    console.log(req.body)
+    if (req.body.json()) var parsed = await req.body.json()
+    if (parsed) console.log(parsed)
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(chalk.grey(`(${ip})`)+` Create request received for user: ${req.body.username}`);
 
@@ -122,9 +125,6 @@ router.post('/login', async (req, res, next) =>{
 })
 
 router.post('/guest', async (req, res, next)=>{
-    console.log(req.body)
-    if (req.body.json()) var parsed = await req.body.json()
-    if (parsed) console.log(parsed)
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(chalk.grey(`(${ip}) `)+"Request for guest access");
 
