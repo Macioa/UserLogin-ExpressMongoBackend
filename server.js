@@ -31,7 +31,7 @@ var corsOptions = {
 }
 server.use(cors(corsOptions));
 //server.use(helmet())
-
+server.post('/register', (req,res,next)=>{ res.redirect('/auth/register') })
 
 server.use('/auth/', require('./Controller/auth'))
 
@@ -39,7 +39,7 @@ server.post('/login', (req,res,next)=>{ res.redirect(307,'/auth/login') })
 
 server.post('/guest', (req,res,next)=>{ res.redirect(307,'/auth/guest') })
 
-server.post('/register', (req,res,next)=>{ res.redirect('/auth/register') })
+
 
 server.listen(port, (err)=>{
     if (err) console.error(chalk.red('Could not start Express server: '+chalk.grey(err)))
