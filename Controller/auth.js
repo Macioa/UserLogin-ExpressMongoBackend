@@ -8,6 +8,7 @@ const getZipByIp = require('../IPStack/Geolocate')
 
 const Users = require('../Models/User')
 
+
 //                  Server Variables
 const cookieLength = process.env.COOKIELENGTH||24*60*60*1000
 const cookieOptions = process.env.COOKIEOPTIONS||{ maxAge: cookieLength, httpOnly: false, sameSite:'strict' }
@@ -54,8 +55,7 @@ const createUser = async (newUser, req, res) =>{
 
 //                  Routes
 router.post('/register', async (req, res, next)=>{
-    let test = new FormData(req.body)
-    console.log(test.get('key'))
+    //console.log(test.get('key'))
     if (req.body.json()) var parsed = await req.body.json()
     if (parsed) console.log(parsed)
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
