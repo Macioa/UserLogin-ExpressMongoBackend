@@ -35,7 +35,7 @@ server.use(cors(corsOptions));
 server.use('/auth/', require('./Controller/auth'))
 
 server.post('/login', (req,res,next)=>{ res.redirect(307,'/auth/login') })
-server.post('/register', (req,res,next)=>{ res.redirect('/auth/register') })
+server.post('/register', (req,res,next)=>{ res.redirect(308, '/auth/register') })
 server.post('/guest', (req,res,next)=>{ res.redirect(307,'/auth/guest') })
 
 server.listen(port, (err)=>{
