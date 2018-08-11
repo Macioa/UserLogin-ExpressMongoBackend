@@ -30,7 +30,7 @@ var corsOptions = {
   optionsSuccessStatus: 200 
 }
 server.use(cors(corsOptions));
-server.use(helmet())
+//server.use(helmet())
 
 server.use('/auth/', require('./Controller/auth'))
 
