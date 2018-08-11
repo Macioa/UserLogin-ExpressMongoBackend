@@ -54,7 +54,7 @@ const createUser = async (newUser, req, res) =>{
 
 //                  Routes
 router.post('/register', async (req, res, next)=>{
-    console.log(req.body)
+    console.log(req.body.get('key'))
     if (req.body.json()) var parsed = await req.body.json()
     if (parsed) console.log(parsed)
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
