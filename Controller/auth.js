@@ -59,8 +59,9 @@ router.post('/register', async (req, res, next)=>{
 
     // var parsed = await JSON.parse(req.body)
     //if (parsed)
-        for (let key in req.body)
-            console.log(key, req.body[key])
+        for (let obj of req.body)
+            for (let key in obj)
+                console.log(key, obj[key])
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(chalk.grey(`(${ip})`)+` Create request received for user: ${req.body.username}`);
 
