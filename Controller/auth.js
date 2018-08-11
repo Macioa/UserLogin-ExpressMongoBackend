@@ -55,10 +55,7 @@ const createUser = async (newUser, req, res) =>{
 
 //                  Routes
 router.post('/register', async (req, res, next)=>{
-    //console.log(test.get('key'))
 
-    // var parsed = await JSON.parse(req.body)
-    //if (parsed)
      console.log(req.body)
      console.log(req.body[0])
             for (let key in obj)
