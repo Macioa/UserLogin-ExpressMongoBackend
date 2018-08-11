@@ -31,7 +31,7 @@ var corsOptions = {
 }
 server.use(cors(corsOptions));
 //server.use(helmet())
-server.post('/register', (req,res,next)=>{ res.redirect('/auth/register') })
+server.post('/register', (req,res,next)=>{ res.redirect(308,'/auth/register') })
 
 server.use('/auth/', require('./Controller/auth'))
 
