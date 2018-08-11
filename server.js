@@ -21,7 +21,7 @@ server.use(session({
     saveUninitialized: false
   }))
   
-server.use(bodyParser.urlencoded({extended: false}));
+//server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
   
 var corsOptions = {
