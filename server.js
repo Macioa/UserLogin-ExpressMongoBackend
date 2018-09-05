@@ -4,8 +4,8 @@
 */
 try { require('./env') }catch(err){ console.log(err)};
 require('./dbConnect')
-const port = process.env.PORT||3000;
-const frontserver = process.env.SERVER||'https://localhost:3000'
+const port = process.env.PORT||9000;
+const frontserver = process.env.SERVER||'http://localhost:3000'
 
 const express = require('express');
 const server = express();
@@ -23,21 +23,24 @@ server.use(session({
   
 //server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
-  
+console.log(frontserver)
 var corsOptions = {
   origin: frontserver,
   credentials: true,
-  optionsSuccessStatus: 200 
+  content:'application/json',
+  optionsSuccessStatus: 200 ,
+  methods: 'POST',
 }
+
 server.use(cors(corsOptions));
-//server.use(helmet())
-server.post('/register', (req,res,next)=>{ res.redirect(308,'/auth/register') })
+server.use(helmet())
+server.post('/register', (req,res,next)=>{ next(); res.redirect(308,'/auth/register') })
 
 server.use('/auth/', require('./Controller/auth'))
 
-server.post('/login', (req,res,next)=>{ res.redirect(307,'/auth/login') })
+server.post('/login', (req,res,next)=>{ next(); res.redirect(307,'/auth/login') })
 
-server.post('/guest', (req,res,next)=>{ res.redirect(307,'/auth/guest') })
+server.post('/guest', (req,res,next)=>{ next(); res.redirect(307,'/auth/guest') })
 
 
 

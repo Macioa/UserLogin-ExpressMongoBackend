@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 
-var dbURL=`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASS}${process.env.DBURL}`;
+var dbURL=(process.env.DBUSER)?`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASS}${process.env.DBURL}`: 'mongodb://localhost:27017/';
 
 mongoose.connect(dbURL)
 
